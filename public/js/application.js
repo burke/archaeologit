@@ -123,5 +123,4 @@ $(function() {
       JSGIT.renderCommit(ui.value);
     }
   });
-  JSGIT.renderCommit(0);
 });
