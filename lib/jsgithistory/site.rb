@@ -1,4 +1,8 @@
-Repos = { :jsgithistory => "/Users/stef/src/github/burke/jsgithistory"}
+Repos = { 
+  #:jsgithistory => "/Users/stef/src/github/burke/jsgithistory"
+  :jsgithistory => "/Users/blibbey/src/jsgithiistory",
+  :panda        => "/Users/blibbey/src/panda"
+}
 
 class JSGitHistory::Site < Sinatra::Application
   set :public, JSGitHistory::App.public_path

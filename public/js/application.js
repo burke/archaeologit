@@ -13,7 +13,7 @@ var JSGIT = {};
   J.DOWN = -1;
 
   J.colourForAuthor = (function() {
-    var colours = ["#cca", "#cac", "#acc", "#aac", "#aca", "#caa", "#ffc", "#fcf", "#cff", "#ccf", "#cfc", "#fcc"];
+    var colours = ["#aa8", "#a8a", "#8aa", "#88a", "#8a8", "#a88", "#cca", "#cac", "#acc", "#aac", "#aca", "#caa", "#ffc", "#fcf", "#cff", "#ccf", "#cfc", "#fcc"];
     var authors = {};
     return function(author) {
       if (! authors[author]) {
