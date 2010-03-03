@@ -13,25 +13,27 @@ class JSGitHistory::Site < Sinatra::Application
     splat_path = path_from_splat(params[:splat])
   
     path = File.join(repo_path, splat_path)
-  
+
     if File.file?(path)
       @log = Git.repo(repo_path).log(path)
       haml :log
 
     elsif File.directory?(path)
       
-      entries = Dir.entries(path).reject do |entrie|
-        entrie =~/^\./
+      entries = Dir.entries(path).reject do |entry|
+        entry =~ /^\./
       end.group_by do |file| 
         File.directory?(File.join(path,file)) ? :directory : :file
       end
-   
+
+      @parent_directory = splat_path.sub(/\/$/,'').split('/')[0..-2].join('/')
+      @parent_directory = "/#{params[:repo]}/#{@parent_directory}/".sub('//','/')
       @files   = entries[:file]      || []
       @folders = entries[:directory] || []
   
       haml :index
     else 
-      "FILE PATH"
+      "404'd!"
     end
   end
   

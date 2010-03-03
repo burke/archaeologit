@@ -1,7 +1,10 @@
+<a href="#{@parent_directory}">Parent Directory</a>
+%ul
+  - @folders.each do |entry|
+    %li
+      <a href="#{entry}/">#{entry}</a>
+%hr/
 %ul
   - @files.each do |entry|
     %li
       <a href="#{entry}">#{entry}</a>
-  - @folders.each do |entry|
-    %li
-      <a href="#{entry}/">#{entry}</a>
