@@ -29,7 +29,7 @@ var JSGIT = {};
   J.renderHistory = function(patches) {
     J.HISTORY = J.parsePatches(patches);
     var before = new Date().getTime();
-    
+
     J.renderCommit(J.HISTORY.length-1);
     console.log(((new Date()).getTime() - before))
 
@@ -49,8 +49,16 @@ var JSGIT = {};
         } else {
           J.renderUp();
         }
- 
+
         setTimeout(arguments.callee,0);
+      } else {
+        $("#screen").html(J.SCREEN.join(""));
+        $("#linenumbers").height($("#screen").height());
+        var commit = J.HISTORY[J.currentCommit];
+        $("#commitmsg").html(commit.message);
+        $("#commithash").html(commit.commit);
+        $("#date").html(commit.date);
+        $("#author").html(commit.author);
       }
     })();
   };
@@ -69,10 +77,6 @@ var JSGIT = {};
 
   J.modifyScreen = function(direction, commit) {
     if (!commit.patch) { return; } // If no patch is given, we can kind of just ignore this.
-    $("#commitmsg").html(commit.message);
-    $("#commithash").html(commit.commit);
-    $("#date").html(commit.date);
-    $("#author").html(commit.author);
     var chunks = commit.patch.split(/^(?=@@ )/m).slice(1);
 
     $.each(chunks, function(i, chunk){J.applyChunk(direction, chunk, commit.author);});
@@ -112,8 +116,6 @@ var JSGIT = {};
     } else { // J.DOWN
       J.SCREEN = J.REWRITE_SAVEPOINTS[J.currentCommit];
     }
-    $("#screen").html(J.SCREEN.join(""));
-    $("#linenumbers").height($("#screen").height());
   };
 
   J.parsePatches = function(patches) {
@@ -129,7 +131,7 @@ var JSGIT = {};
         date:    tc.match(/^Date:   .*$/m)[0].substr(8),
         message: tc.split(/^$/m)[1].replace(/^    /mg,""),
         patch:   tc.split(/^\+\+\+ b\/.*$/m)[1]
-      }; 
+      };
     }
 
     return commits.reverse();
