@@ -4,6 +4,10 @@ dependencies:
     group: 
     - :default
     version: = 2.2.20
+  rack: 
+    group: 
+    - :default
+    version: ">= 0"
   sinatra: 
     group: 
     - :default
@@ -15,7 +19,7 @@ specs:
     version: 0.9.4
 - haml: 
     version: 2.2.20
-hash: 9a508f5bb2175c1d1bbd094bb732b45d13f7a459
+hash: c805184c26f6b3cfd24fbac753c4d47cf52a0ad8
 sources: 
 - Rubygems: 
     uri: http://gemcutter.org
