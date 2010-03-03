@@ -1,3 +1,7 @@
-- entries.each do |entry|
-  <a href="#{entry}/">#{entry}</a>
-  <br />
+%ul
+  - @files.each do |entry|
+    %li
+      <a href="#{entry}">#{entry}</a>
+  - @folders.each do |entry|
+    %li
+      <a href="#{entry}/">#{entry}</a>

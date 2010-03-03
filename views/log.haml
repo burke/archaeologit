@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 %html
   %head
     %title Git History Viewer
@@ -16,7 +17,7 @@
       #content 
         %ul#sidebar
         #screen{:style => "font-family: monospace"}
-      %pre#history{:style=>"display:none;height:0"}= log
+      %pre#history{:style=>"display:none;height:0"}= @log
       #footer
         %dl
           %dt Commit: 
