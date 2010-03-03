@@ -1,8 +1,4 @@
-Repos = { 
-  #:jsgithistory => "/Users/stef/src/github/burke/jsgithistory"
-  :jsgithistory => "/Users/blibbey/src/jsgithiistory",
-  :panda        => "/Users/blibbey/src/panda"
-}
+Repos = YAML.load_file(File.join(File.dirname(__FILE__), "..", "..", "repositories.yml"))
 
 class JSGitHistory::Site < Sinatra::Application
   set :public, JSGitHistory::App.public_path
