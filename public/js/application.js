@@ -90,10 +90,10 @@ var JSGIT = {};
       var x = J.REWRITE_SAVEPOINTS[J.currentCommit-1].length;
       if (x > J.MAX_LINES) { J.MAX_LINES = x; }
 
-      if (parseInt(header.match(/\-\d*/)[0].substr(1)) == 0) {
+      if (parseInt(header.match(/\-\d*/)[0].substr(1),10) === 0) {
         J.SCREEN = []; // rewrite
       }
-      start = parseInt(header.match(/\+\d*/)[0].substr(1)) - 1;
+      start = parseInt(header.match(/\+\d*/)[0].substr(1),10) - 1;
       if (start < 0) { start = 0; }
       var curr = 0;
       var real = 0;
