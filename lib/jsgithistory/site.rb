@@ -1,4 +1,4 @@
-Repos = YAML.load_file(File.join(File.dirname(__FILE__), "..", "..", "repositories.yml"))
+Repos = YAML.load_file(JSGitHistory::App.root + 'repositories.yml')
 
 class JSGitHistory::Site < Sinatra::Application
   set :public, JSGitHistory::App.public_path
