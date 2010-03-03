@@ -28,10 +28,7 @@ var JSGIT = {};
 
   J.renderHistory = function(patches) {
     J.HISTORY = J.parsePatches(patches);
-    var before = new Date().getTime();
-
     J.renderCommit(J.HISTORY.length-1);
-    console.log(((new Date()).getTime() - before))
 
     var lineNumbers ='';
     for (var i=1; i<=J.MAX_LINES; i++) {
