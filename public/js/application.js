@@ -19,7 +19,7 @@ var JSGIT = {};
     var authors = {};
     return function(author) {
       if (! authors[author]) {
-        authors[author] = colours.pop();
+        authors[author] = colours.pop() || '#eee';
         $("#sidebar").append("<li style='background-color:"+authors[author]+";'>"+author+"</li>");
       }
       return authors[author];
