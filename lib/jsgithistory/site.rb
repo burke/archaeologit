@@ -6,6 +6,10 @@ class JSGitHistory::Site < Sinatra::Application
 
   set :haml, {:format => :html5}
 
+  get '/:repo' do
+    redirect "/#{params[:repo]}/"
+  end
+  
   get '/:repo/*' do 
     repo_path = Repos[params[:repo].to_sym]
     halt 404 unless repo_path
