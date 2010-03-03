@@ -1,0 +1,21 @@
+--- 
+dependencies: 
+  haml: 
+    group: 
+    - :default
+    version: = 2.2.20
+  sinatra: 
+    group: 
+    - :default
+    version: ">= 0"
+specs: 
+- rack: 
+    version: 1.1.0
+- sinatra: 
+    version: 0.9.4
+- haml: 
+    version: 2.2.20
+hash: 9a508f5bb2175c1d1bbd094bb732b45d13f7a459
+sources: 
+- Rubygems: 
+    uri: http://gemcutter.org
