@@ -26,7 +26,7 @@ var JSGIT = {};
 
   J.renderHistory = function(patches) {
     J.HISTORY = J.parsePatches(patches);
-    //J.renderCommit(J.HISTORY.length-1);
+    J.renderCommit(J.HISTORY.length-1);
   };
 
   J.renderCommit = function(n) {
@@ -118,7 +118,7 @@ $(function() {
   JSGIT.renderHistory($("#history").text());
   $("#nav").slider({
     max: JSGIT.HISTORY.length-1,
-    //value: JSGIT.HISTORY.length-1,
+    value: JSGIT.HISTORY.length-1,
     slide: function(event, ui){
       JSGIT.renderCommit(ui.value);
     }
