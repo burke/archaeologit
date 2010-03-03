@@ -2,4 +2,4 @@
 source :gemcutter
 #
 gem 'sinatra'
-gem 'haml'
+gem 'haml', '2.2.20'
