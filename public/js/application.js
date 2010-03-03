@@ -28,20 +28,31 @@ var JSGIT = {};
 
   J.renderHistory = function(patches) {
     J.HISTORY = J.parsePatches(patches);
+    var before = new Date().getTime();
+    
     J.renderCommit(J.HISTORY.length-1);
+    console.log(((new Date()).getTime() - before))
+
+    var lineNumbers ='';
     for (var i=1; i<=J.MAX_LINES; i++) {
-      $("#linenumbers").append("<li>"+i+"</li>");
+      lineNumbers += ("<li>"+i+"</li>");
     }
+    $("#linenumbers").append(lineNumbers);
   };
 
   J.renderCommit = function(n) {
-    while (n != J.currentCommit) {
-      if (n < J.currentCommit) {
-        J.renderDown();
-      } else {
-        J.renderUp();
+
+    (function(){
+      if(n != J.currentCommit){
+        if (n < J.currentCommit) {
+          J.renderDown();
+        } else {
+          J.renderUp();
+        }
+ 
+        setTimeout(arguments.callee,0);
       }
-    }
+    })();
   };
 
   J.renderUp = function() {
@@ -108,16 +119,19 @@ var JSGIT = {};
   J.parsePatches = function(patches) {
     var textcommits = patches.split(/^(?=commit [0-9a-f]{40}$)/m);
     var commits = [];
-    $.each(textcommits, function(i, tc) {
+
+
+    for(var i = 0; i<textcommits.length; i++){
+      var tc = textcommits[i];
       commits[i] = {
         commit:  tc.match(/^commit .*$/m)[0].substr(7),
         author:  tc.match(/^Author: .*$/m)[0].substr(8),
         date:    tc.match(/^Date:   .*$/m)[0].substr(8),
         message: tc.split(/^$/m)[1].replace(/^    /mg,""),
         patch:   tc.split(/^\+\+\+ b\/.*$/m)[1]
-      };
+      }; 
+    }
 
-    });
     return commits.reverse();
   };
 
