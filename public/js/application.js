@@ -9,6 +9,8 @@ var JSGIT = {};
 
   J.REWRITE_SAVEPOINTS = [];
 
+  J.MAX_LINES = 0;
+
   J.UP = 1;
   J.DOWN = -1;
 
@@ -27,6 +29,9 @@ var JSGIT = {};
   J.renderHistory = function(patches) {
     J.HISTORY = J.parsePatches(patches);
     J.renderCommit(J.HISTORY.length-1);
+    for (var i=1; i<=J.MAX_LINES; i++) {
+      $("#linenumbers").append("<li>"+i+"</li>");
+    }
   };
 
   J.renderCommit = function(n) {
@@ -70,6 +75,9 @@ var JSGIT = {};
 
     if (direction == J.UP) {
       J.REWRITE_SAVEPOINTS[J.currentCommit-1] = J.SCREEN.slice(0);
+      var x = J.REWRITE_SAVEPOINTS[J.currentCommit-1].length;
+      if (x > J.MAX_LINES) { J.MAX_LINES = x; }
+
       if (parseInt(header.match(/\-\d*/)[0].substr(1)) == 0) {
         J.SCREEN = []; // rewrite
       }
