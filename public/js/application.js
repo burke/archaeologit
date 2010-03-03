@@ -94,6 +94,7 @@ var JSGIT = {};
       J.SCREEN = J.REWRITE_SAVEPOINTS[J.currentCommit];
     }
     $("#screen").html(J.SCREEN.join("<br/>"));
+    $("#linenumbers").height($("#screen").height());
   };
 
   J.parsePatches = function(patches) {

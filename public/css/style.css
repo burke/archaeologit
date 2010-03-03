@@ -41,7 +41,7 @@ pre {
 }
 
 #content {
-   padding: 40px 0 110px 0;
+   padding: 35px 200px 100px 30px;
 }
 
 dl {
@@ -95,3 +95,18 @@ dt {
    padding: 3px 3px 0 3px;
    overflow: hidden;
 }
+
+#linenumbers {
+   font-family: monospace;
+   position: absolute;
+   left: 0;
+   top: 35px;
+   width: 30px;
+   height: 100%;
+   overflow: hidden;
+   background-color: #eee;
+   list-style-type: none;
+   margin: 0;
+   padding: 0;
+}
+
