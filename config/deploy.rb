@@ -1,5 +1,5 @@
 set :application, "jsgithistory.53cr.com"
-set :repository,  "git@github.com:winnipegrb/jsgithistory.git"
+set :repository,  "git@github.com:burke/jsgithistory.git"
 
 set :scm, :git
 set :deploy_to, '/srv/rack/jsgithistory.53cr.com/'
