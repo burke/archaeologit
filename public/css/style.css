@@ -5,8 +5,8 @@ body {
 
 pre {
    margin: 0;
-   padding: 0;
-   display: inline;
+   padding: 0 0 0 5px;
+   display: block;
 }
 
 #container {
@@ -34,6 +34,7 @@ pre {
 #footer {
    font-family: HelveticaNeue-Light, helvetica, arial, sans;
    font-size: 18px;
+   text-shadow: 1px 1px 1px #666;
    position: fixed;
    bottom: 0px;
    display: block;
@@ -77,6 +78,7 @@ dt {
    font-family: HelveticaNeue-Light, helvetica, arial, sans;
    position: fixed;
    right: 0;
+   border-left: 1px solid #888;
    top: 35px;
    width: 200px;
    height: 100%;
@@ -98,6 +100,7 @@ dt {
    font-family: monospace;
    position: absolute;
    left: 0;
+   border-right: 1px solid #888;
    top: 35px;
    width: 30px;
    height: 100%;

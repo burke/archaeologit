@@ -101,7 +101,7 @@ var JSGIT = {};
     } else { // J.DOWN
       J.SCREEN = J.REWRITE_SAVEPOINTS[J.currentCommit];
     }
-    $("#screen").html(J.SCREEN.join("<br/>"));
+    $("#screen").html(J.SCREEN.join(""));
     $("#linenumbers").height($("#screen").height());
   };
 
