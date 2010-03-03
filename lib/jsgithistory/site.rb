@@ -40,12 +40,10 @@ module JSGitHistory
       end
     end
     
-    
     not_found do
       @repos = Repos.all
       haml :no_repo
     end
-
 
     # attempt to prevent traversal
     def no_traverse(path)

@@ -5,17 +5,17 @@ module JSGitHistory
 
     def self.all
       # might be an idea to not cache this...
-      @all ||= YAML.load_file(path_user_dir_repo || load_from_config_dir)
+      @all ||= YAML.load_file(user_config_repos_path || app_config_repos_path)
     end
 
     private
 
-    def self.path_user_dir_repo
+    def self.user_config_repos_path
       path = USER_DIR + 'repositories.yml'
       path if File.exists?(path)
     end
 
-    def self.load_from_config_dir
+    def self.app_config_repos_path
       App.root + 'repositories.yml'
     end
 
