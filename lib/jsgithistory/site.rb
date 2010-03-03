@@ -1,7 +1,7 @@
 module JSGitHistory
   class Site < Sinatra::Application
-    set :public, JSGitHistory::App.public_path
-    set :views,  JSGitHistory::App.view_path
+    set :public, App.public_path
+    set :views,  App.view_path
 
     set :haml, {:format => :html5}
 
