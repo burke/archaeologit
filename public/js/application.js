@@ -76,7 +76,9 @@ var JSGIT = {};
     if (!commit.patch) { return; } // If no patch is given, we can kind of just ignore this.
     var chunks = commit.patch.split(/^(?=@@ )/m).slice(1);
 
-    $.each(chunks, function(i, chunk){J.applyChunk(direction, chunk, commit.author);});
+    $.each(chunks, function(i, chunk){
+      J.applyChunk(direction, chunk, commit.author);
+    });
   };
 
   J.applyChunk = function(direction, chunk, author) {
