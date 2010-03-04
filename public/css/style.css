@@ -114,4 +114,5 @@ dt {
 #linenumbers li {
    border-bottom: 1px solid #bbb;
    margin-bottom: -1px;
+   text-align: right;
 }
