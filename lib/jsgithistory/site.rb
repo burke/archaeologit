@@ -20,7 +20,7 @@ module JSGitHistory
       path = File.join(repo_path, splat_path)
 
       if File.file?(path)
-        @log = CGI.escapeHTML(Git.repo(repo_path).log(path))
+        @log = CGI.escapeHTML(CGI.escapeHTML(Git.repo(repo_path).log(path)))
         haml :log
 
       elsif File.directory?(path)
