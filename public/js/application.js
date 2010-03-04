@@ -12,31 +12,51 @@ var JSGIT = {};
     return HISTORY.length;
   };
 
-  J.renderCommit = function(n) {
+  J.renderCommit = function(n, force) {
     if (READY) {
-      setTimeout(function() {
-        var commit = HISTORY[n];
-        $("#screen").html(commit.rendered);
-        $("#commitmsg").html(commit.message);
-        $("#commithash").html(commit.commit);
-        $("#date").html(commit.date);
-        $("#author").html(commit.author);
-        $("#linenumbers").height($("#screen").height());
-      }, 0);
+      if (force || !BUSY) {
+        setTimeout(function() {
+          if (! force) { BUSY = true; }
+          var startTime = new Date();
+          var commit = HISTORY[n];
+          $("#screen").html(commit.rendered);
+          $("#commitmsg").html(commit.message);
+          $("#commithash").html(commit.commit);
+          $("#date").html(commit.date);
+          $("#author").html(commit.author);
+          $("#linenumbers").height($("#screen").height());
+          if (! force) { setTimeout(function(){BUSY=false;}, new Date()-startTime); }
+        }, 0);
+      }
     }
   };
 
+  J.playback = function(timeout) {
+    (function() {
+      var val = $("#nav").slider('value');
+      if (val < HISTORY.length) {
+        $("#nav").slider('value', val+1);
+        setTimeout(arguments.callee, timeout);
+      }
+    })();
+  };
+
   // private //////////////////////////////////////////////////////////////////
-  var HISTORY   = [];
-  var SCREEN    = [];
-  var MAX_LINES = 0;
-  var READY     = false;
+  var HISTORY = [],
+    SCREEN    = [],
+    MAX_LINES = 0,
+    READY     = false,
+    BUSY      = false;
 
   var colourForAuthor = (function() {
     var authors = {};
     var nextColour = (function() {
       var counter = -1;
-      var colours = ["#ffc", "#fcf", "#cff", "#ccf", "#cfc", "#fcc", "#cca", "#cac", "#acc", "#aac", "#aca", "#caa", "#aa8", "#a8a", "#8aa", "#88a", "#8a8", "#a88"];
+      var colours = [
+        "#ffc", "#fcf", "#cff", "#ccf", "#cfc", "#fcc",
+        "#cca", "#cac", "#acc", "#aac", "#aca", "#caa",
+        "#aa8", "#a8a", "#8aa", "#88a", "#8a8", "#a88"
+      ];
       return function() {
         counter += 1;
         return colours[counter % colours.length];
@@ -133,10 +153,13 @@ var JSGIT = {};
 $(function() {
   JSGIT.initialize($("#history").text());
   $("#nav").slider({
-    max: JSGIT.numberOfCommits()-1,
+    max:   JSGIT.numberOfCommits()-1,
     value: JSGIT.numberOfCommits()-1,
+    change: function(event, ui){
+      JSGIT.renderCommit(ui.value, true);
+    },
     slide: function(event, ui){
-      JSGIT.renderCommit(ui.value);
+      JSGIT.renderCommit(ui.value, false);
     }
   });
 });
