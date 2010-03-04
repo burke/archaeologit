@@ -2,12 +2,37 @@ var JSGIT = {};
 
 (function(J) {
 
-  J.HISTORY = [];
-  J.SCREEN = [];
-  J.MAX_LINES = 0;
-  J.READY = false;
+  // public ///////////////////////////////////////////////////////////////////
+  J.numberOfCommits = function() {
+    return HISTORY.length;
+  };
 
-  J.colourForAuthor = (function() {
+  J.loadHistory = function(patches) {
+    HISTORY = parsePatches(patches);
+    preRenderCommits();
+  };
+
+  J.renderCommit = function(n) {
+    if (READY) {
+      setTimeout(function() {
+        var commit = HISTORY[n];
+        $("#screen").html(commit.rendered);
+        $("#commitmsg").html(commit.message);
+        $("#commithash").html(commit.commit);
+        $("#date").html(commit.date);
+        $("#author").html(commit.author);
+        $("#linenumbers").height($("#screen").height());
+      }, 0);
+    }
+  };
+
+  // private //////////////////////////////////////////////////////////////////
+  var HISTORY = [];
+  var SCREEN = [];
+  var MAX_LINES = 0;
+  var READY = false;
+
+  var colourForAuthor = (function() {
     var authors = {};
     var nextColour = (function() {
       var counter = -1;
@@ -27,67 +52,48 @@ var JSGIT = {};
     };
   })();
 
-  J.loadHistory = function(patches) {
-    J.HISTORY = J.parsePatches(patches);
-    J.preRenderCommits();
-  };
-
-  J.preRenderCommits = function() {
+  function preRenderCommits() {
     var current = -1;
 
     (function(){
-      if(J.HISTORY.length-1 == current){
+      if(HISTORY.length-1 == current){
         var lineNumbers ='';
-        for (var i=1; i<=J.MAX_LINES; i++) {
+        for (var i=1; i<=MAX_LINES; i++) {
           lineNumbers += ("<li>"+i+"</li>");
         }
-        J.READY = true;
+        READY = true;
         $("#linenumbers").html(lineNumbers);
         J.renderCommit(current);
       } else {
         current += 1;
-        J.loadCommit(current);
+        loadCommit(current);
         setTimeout(arguments.callee, 0);
       }
     })();
   };
 
-  J.renderCommit = function(n) {
-    if (J.READY) {
-      setTimeout(function() {
-        var commit = J.HISTORY[n];
-        $("#screen").html(commit.rendered);
-        $("#commitmsg").html(commit.message);
-        $("#commithash").html(commit.commit);
-        $("#date").html(commit.date);
-        $("#author").html(commit.author);
-        $("#linenumbers").height($("#screen").height());
-      }, 0);
-    }
-  };
-
-  J.loadCommit = function(n) {
-    var commit = J.HISTORY[n];
+  function loadCommit(n) {
+    var commit = HISTORY[n];
 
     if (commit.patch) {
       var chunks = commit.patch.split(/^(?=@@ )/m).slice(1);
       $.each(chunks, function(i, chunk){
-        J.applyChunk(commit, chunk);
+        applyChunk(commit, chunk);
       });
     }
 
-    commit.rendered = J.SCREEN.join("");
-    if (J.SCREEN.length > J.MAX_LINES) { J.MAX_LINES = J.SCREEN.length; }
+    commit.rendered = SCREEN.join("");
+    if (SCREEN.length > MAX_LINES) { MAX_LINES = SCREEN.length; }
   };
 
-  J.applyChunk = function(commit, chunk) {
+  function applyChunk(commit, chunk) {
     var lines = chunk.split(/\n/m);
     var header = lines[0];
     var pos;
     lines = lines.slice(1);
 
     if (parseInt(header.match(/\-\d*/)[0].substr(1),10) === 0) {
-      J.SCREEN = []; // rewrite
+      SCREEN = []; // rewrite
     }
     pos = parseInt(header.match(/\+\d*/)[0].substr(1),10) - 1;
     if (pos < 0) { pos = 0; }
@@ -95,9 +101,9 @@ var JSGIT = {};
 
     while (lines[curr]) {
       if (lines[curr][0]=="+") {
-        J.SCREEN.splice(pos, 0, "<pre style='background-color:"+J.colourForAuthor(commit.author)+";'>"+(lines[curr].slice(1) || "&nbsp;")+"</pre>");
+        SCREEN.splice(pos, 0, "<pre style='background-color:"+colourForAuthor(commit.author)+";'>"+(lines[curr].slice(1) || "&nbsp;")+"</pre>");
       } else if (lines[curr][0]=="-") {
-        J.SCREEN.splice(pos, 1);
+        SCREEN.splice(pos, 1);
         pos -= 1;
       }
       curr += 1;
@@ -105,7 +111,7 @@ var JSGIT = {};
     }
   };
 
-  J.parsePatches = function(patches) {
+  function parsePatches(patches) {
     var textcommits = patches.split(/^(?=commit [0-9a-f]{40}$)/m);
     var commits = [];
 
@@ -115,7 +121,7 @@ var JSGIT = {};
         author:  tc.match(/^Author: .*$/m)[0].substr(8),
         date:    tc.match(/^Date:   .*$/m)[0].substr(8),
         message: tc.split(/^$/m)[1].replace(/^    /mg,""),
-        patch:   tc.split(/^\+\+\+ b\/.*$/m).slice(1).join('')
+        patch:   tc.split(/^\+\+\+ b\/.*$/m)[1]
       };
     });
 
@@ -127,8 +133,8 @@ var JSGIT = {};
 $(function() {
   JSGIT.loadHistory($("#history").text());
   $("#nav").slider({
-    max: JSGIT.HISTORY.length-1,
-    value: JSGIT.HISTORY.length-1,
+    max: JSGIT.numberOfCommits()-1,
+    value: JSGIT.numberOfCommits()-1,
     slide: function(event, ui){
       JSGIT.renderCommit(ui.value);
     }
