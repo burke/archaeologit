@@ -7,7 +7,7 @@ var JSGIT = {};
 
   J.SCREEN = [];
 
-  J.REWRITE_SAVEPOINTS = [];
+  J.SAVEPOINTS = [];
 
   J.MAX_LINES = 0;
 
@@ -30,11 +30,6 @@ var JSGIT = {};
     J.HISTORY = J.parsePatches(patches);
     J.renderCommit(J.HISTORY.length-1);
 
-    var lineNumbers ='';
-    for (var i=1; i<=J.MAX_LINES; i++) {
-      lineNumbers += ("<li>"+i+"</li>");
-    }
-    $("#linenumbers").append(lineNumbers);
   };
 
   J.renderCommit = function(n) {
@@ -50,12 +45,16 @@ var JSGIT = {};
         setTimeout(arguments.callee,0);
       } else {
         $("#screen").html(J.SCREEN.join(""));
-        $("#linenumbers").height($("#screen").height());
         var commit = J.HISTORY[J.currentCommit];
         $("#commitmsg").html(commit.message);
         $("#commithash").html(commit.commit);
         $("#date").html(commit.date);
         $("#author").html(commit.author);
+        var lineNumbers ='';
+        for (var i=1; i<=J.MAX_LINES; i++) {
+          lineNumbers += ("<li>"+i+"</li>");
+        }
+        $("#linenumbers").height($("#screen").height()).html(lineNumbers);
       }
     })();
   };
@@ -73,47 +72,52 @@ var JSGIT = {};
   };
 
   J.modifyScreen = function(direction, commit) {
-    if (!commit.patch) { return; } // If no patch is given, we can kind of just ignore this.
-    var chunks = commit.patch.split(/^(?=@@ )/m).slice(1);
 
-    $.each(chunks, function(i, chunk){
-      J.applyChunk(direction, chunk, commit.author);
-    });
+    // If we've already generated this view, just set it and return...
+    if (J.SAVEPOINTS[J.currentCommit]) {
+      J.SCREEN = J.SAVEPOINTS[J.currentCommit];
+      return;
+    }
+
+    if (commit.patch) {
+      var chunks = commit.patch.split(/^(?=@@ )/m).slice(1);
+      $.each(chunks, function(i, chunk){
+        J.applyChunk(chunk, commit.author);
+      });
+    }
+
+    J.SAVEPOINTS[J.currentCommit] = J.SCREEN.slice(0);
+    var x = J.SAVEPOINTS[J.currentCommit].length;
+    if (x > J.MAX_LINES) { J.MAX_LINES = x; }
+
   };
 
-  J.applyChunk = function(direction, chunk, author) {
+  J.applyChunk = function(chunk, author) {
+
     var lines = chunk.split(/\n/m);
     var header = lines[0];
     var start;
     lines = lines.slice(1);
 
-    if (direction == J.UP) {
-      J.REWRITE_SAVEPOINTS[J.currentCommit-1] = J.SCREEN.slice(0);
-      var x = J.REWRITE_SAVEPOINTS[J.currentCommit-1].length;
-      if (x > J.MAX_LINES) { J.MAX_LINES = x; }
+    if (parseInt(header.match(/\-\d*/)[0].substr(1),10) === 0) {
+      J.SCREEN = []; // rewrite
+    }
+    start = parseInt(header.match(/\+\d*/)[0].substr(1),10) - 1;
+    if (start < 0) { start = 0; }
+    var curr = 0;
+    var real = 0;
 
-      if (parseInt(header.match(/\-\d*/)[0].substr(1),10) === 0) {
-        J.SCREEN = []; // rewrite
+    while (lines[curr]) {
+      if (lines[curr][0]=="+") {
+        J.SCREEN.splice(start+real, 0, "<pre style='background-color:"+J.colourForAuthor(author)+";'>"+lines[curr].slice(1)+"</pre>");
+        real += 1;
+      } else if (lines[curr][0]=="-") {
+        J.SCREEN.splice(start+real, 1);
+      } else {
+        // skip!
+        real += 1;
       }
-      start = parseInt(header.match(/\+\d*/)[0].substr(1),10) - 1;
-      if (start < 0) { start = 0; }
-      var curr = 0;
-      var real = 0;
-
-      while (lines[curr]) {
-        if (lines[curr][0]=="+") {
-          J.SCREEN.splice(start+real, 0, "<pre style='background-color:"+J.colourForAuthor(author)+";'>"+lines[curr].slice(1)+"</pre>");
-          real += 1;
-        } else if (lines[curr][0]=="-") {
-          J.SCREEN.splice(start+real, 1);
-        } else {
-          // skip!
-          real += 1;
-        }
-        curr += 1;
-      }
-    } else { // J.DOWN
-      J.SCREEN = J.REWRITE_SAVEPOINTS[J.currentCommit];
+      curr += 1;
     }
   };
 
