@@ -18,6 +18,7 @@ var JSGIT = {};
       };
     })();
     return function(author) {
+      author = author.replace(/ <.*>/,''); // don't show the email -- too long.
       if (! authors[author]) {
         authors[author] = nextColour();
         $("#sidebar").append("<li style='background-color:"+authors[author]+";'>"+author+"</li>");
