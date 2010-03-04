@@ -3,7 +3,6 @@ var JSGIT = {};
 (function(J) {
 
   J.HISTORY = [];
-  J.currentCommit = -1;
   J.SCREEN = [];
   J.SAVEPOINTS = [];
   J.MAX_LINES = 0;
@@ -27,14 +26,20 @@ var JSGIT = {};
   };
 
   J.preRenderCommits = function() {
+    var current = -1;
 
     (function(){
-      if(J.HISTORY.length-1 == J.currentCommit){
+      if(J.HISTORY.length-1 == current){
+        var lineNumbers ='';
+        for (var i=1; i<=J.MAX_LINES; i++) {
+          lineNumbers += ("<li>"+i+"</li>");
+        }
         J.READY = true;
-        J.renderCommit(J.currentCommit);
+        $("#linenumbers").html(lineNumbers);
+        J.renderCommit(current);
       } else {
-        J.currentCommit += 1;
-        J.loadCommit(J.currentCommit);
+        current += 1;
+        J.loadCommit(current);
         setTimeout(arguments.callee,0);
       }
     })();
@@ -42,21 +47,13 @@ var JSGIT = {};
 
   J.renderCommit = function(n) {
     if (J.READY) {
-      J.currentCommit = n;
-
-      J.SCREEN = J.SAVEPOINTS[J.currentCommit];
-
-      $("#screen").html(J.SCREEN.join(""));
-      var commit = J.HISTORY[J.currentCommit];
+      var commit = J.HISTORY[n];
+      $("#screen").html(J.SAVEPOINTS[n]);
       $("#commitmsg").html(commit.message);
       $("#commithash").html(commit.commit);
       $("#date").html(commit.date);
       $("#author").html(commit.author);
-      var lineNumbers ='';
-      for (var i=1; i<=J.MAX_LINES; i++) {
-        lineNumbers += ("<li>"+i+"</li>");
-      }
-      $("#linenumbers").height($("#screen").height()).html(lineNumbers);
+      $("#linenumbers").height($("#screen").height());
     }
   };
 
@@ -70,9 +67,8 @@ var JSGIT = {};
       });
     }
 
-    J.SAVEPOINTS[J.currentCommit] = J.SCREEN.slice(0);
-    var x = J.SAVEPOINTS[J.currentCommit].length;
-    if (x > J.MAX_LINES) { J.MAX_LINES = x; }
+    J.SAVEPOINTS[n] = J.SCREEN.join("");
+    if (J.SCREEN.length > J.MAX_LINES) { J.MAX_LINES = J.SCREEN.length; }
   };
 
   J.applyChunk = function(chunk, author) {
