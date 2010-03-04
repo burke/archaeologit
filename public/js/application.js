@@ -4,7 +4,6 @@ var JSGIT = {};
 
   J.HISTORY = [];
   J.SCREEN = [];
-  J.SAVEPOINTS = [];
   J.MAX_LINES = 0;
   J.READY = false;
 
@@ -48,7 +47,7 @@ var JSGIT = {};
   J.renderCommit = function(n) {
     if (J.READY) {
       var commit = J.HISTORY[n];
-      $("#screen").html(J.SAVEPOINTS[n]);
+      $("#screen").html(commit.rendered);
       $("#commitmsg").html(commit.message);
       $("#commithash").html(commit.commit);
       $("#date").html(commit.date);
@@ -63,38 +62,36 @@ var JSGIT = {};
     if (commit.patch) {
       var chunks = commit.patch.split(/^(?=@@ )/m).slice(1);
       $.each(chunks, function(i, chunk){
-        J.applyChunk(chunk, commit.author);
+        J.applyChunk(commit, chunk);
       });
     }
 
-    J.SAVEPOINTS[n] = J.SCREEN.join("");
+    commit.rendered = J.SCREEN.join("");
     if (J.SCREEN.length > J.MAX_LINES) { J.MAX_LINES = J.SCREEN.length; }
   };
 
-  J.applyChunk = function(chunk, author) {
+  J.applyChunk = function(commit, chunk) {
 
     var lines = chunk.split(/\n/m);
     var header = lines[0];
-    var start;
+    var pos;
     lines = lines.slice(1);
 
     if (parseInt(header.match(/\-\d*/)[0].substr(1),10) === 0) {
       J.SCREEN = []; // rewrite
     }
-    start = parseInt(header.match(/\+\d*/)[0].substr(1),10) - 1;
-    if (start < 0) { start = 0; }
+    pos = parseInt(header.match(/\+\d*/)[0].substr(1),10) - 1;
+    if (pos < 0) { pos = 0; }
     var curr = 0;
-    var real = 0;
 
     while (lines[curr]) {
       if (lines[curr][0]=="+") {
-        J.SCREEN.splice(start+real, 0, "<pre style='background-color:"+J.colourForAuthor(author)+";'>"+lines[curr].slice(1)+"</pre>");
-        real += 1;
+        J.SCREEN.splice(pos, 0, "<pre style='background-color:"+J.colourForAuthor(commit.author)+";'>"+lines[curr].slice(1)+"</pre>");
+        pos += 1;
       } else if (lines[curr][0]=="-") {
-        J.SCREEN.splice(start+real, 1);
+        J.SCREEN.splice(pos, 1);
       } else {
-        // skip!
-        real += 1;
+        pos += 1;
       }
       curr += 1;
     }
