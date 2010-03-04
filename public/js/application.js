@@ -8,11 +8,18 @@ var JSGIT = {};
   J.READY = false;
 
   J.colourForAuthor = (function() {
-    var colours = ["#aa8", "#a8a", "#8aa", "#88a", "#8a8", "#a88", "#cca", "#cac", "#acc", "#aac", "#aca", "#caa", "#ffc", "#fcf", "#cff", "#ccf", "#cfc", "#fcc"];
     var authors = {};
+    var nextColour = (function() {
+      var counter = -1;
+      var colours = ["#ffc", "#fcf", "#cff", "#ccf", "#cfc", "#fcc", "#cca", "#cac", "#acc", "#aac", "#aca", "#caa", "#aa8", "#a8a", "#8aa", "#88a", "#8a8", "#a88"];
+      return function() {
+        counter += 1;
+        return colours[counter % colours.length];
+      };
+    })();
     return function(author) {
       if (! authors[author]) {
-        authors[author] = colours.pop() || '#eee';
+        authors[author] = nextColour();
         $("#sidebar").append("<li style='background-color:"+authors[author]+";'>"+author+"</li>");
       }
       return authors[author];
@@ -39,7 +46,7 @@ var JSGIT = {};
       } else {
         current += 1;
         J.loadCommit(current);
-        setTimeout(arguments.callee,0);
+        setTimeout(arguments.callee, 0);
       }
     })();
   };
@@ -73,11 +80,9 @@ var JSGIT = {};
   };
 
   J.applyChunk = function(commit, chunk) {
-
     var lines = chunk.split(/\n/m);
     var header = lines[0];
     var pos;
-    var content;
     lines = lines.slice(1);
 
     if (parseInt(header.match(/\-\d*/)[0].substr(1),10) === 0) {
@@ -89,15 +94,13 @@ var JSGIT = {};
 
     while (lines[curr]) {
       if (lines[curr][0]=="+") {
-        content = lines[curr].slice(1) || "&nbsp;";
-        J.SCREEN.splice(pos, 0, "<pre style='background-color:"+J.colourForAuthor(commit.author)+";'>"+content+"</pre>");
-        pos += 1;
+        J.SCREEN.splice(pos, 0, "<pre style='background-color:"+J.colourForAuthor(commit.author)+";'>"+(lines[curr].slice(1) || "&nbsp;")+"</pre>");
       } else if (lines[curr][0]=="-") {
         J.SCREEN.splice(pos, 1);
-      } else {
-        pos += 1;
+        pos -= 1;
       }
       curr += 1;
+      pos += 1;
     }
   };
 
