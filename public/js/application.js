@@ -4,15 +4,10 @@ var JSGIT = {};
 
   J.HISTORY = [];
   J.currentCommit = -1;
-
   J.SCREEN = [];
-
   J.SAVEPOINTS = [];
-
   J.MAX_LINES = 0;
-
-  J.UP = 1;
-  J.DOWN = -1;
+  J.READY = false;
 
   J.colourForAuthor = (function() {
     var colours = ["#aa8", "#a8a", "#8aa", "#88a", "#8a8", "#a88", "#cca", "#cac", "#acc", "#aac", "#aca", "#caa", "#ffc", "#fcf", "#cff", "#ccf", "#cfc", "#fcc"];
@@ -26,58 +21,47 @@ var JSGIT = {};
     };
   })();
 
-  J.renderHistory = function(patches) {
+  J.loadHistory = function(patches) {
     J.HISTORY = J.parsePatches(patches);
-    J.renderCommit(J.HISTORY.length-1);
-
+    J.preRenderCommits();
   };
 
-  J.renderCommit = function(n) {
+  J.preRenderCommits = function() {
 
     (function(){
-      if(n != J.currentCommit){
-        if (n < J.currentCommit) {
-          J.renderDown();
-        } else {
-          J.renderUp();
-        }
-
-        setTimeout(arguments.callee,0);
+      if(J.HISTORY.length-1 == J.currentCommit){
+        J.READY = true;
+        J.renderCommit(J.currentCommit);
       } else {
-        $("#screen").html(J.SCREEN.join(""));
-        var commit = J.HISTORY[J.currentCommit];
-        $("#commitmsg").html(commit.message);
-        $("#commithash").html(commit.commit);
-        $("#date").html(commit.date);
-        $("#author").html(commit.author);
-        var lineNumbers ='';
-        for (var i=1; i<=J.MAX_LINES; i++) {
-          lineNumbers += ("<li>"+i+"</li>");
-        }
-        $("#linenumbers").height($("#screen").height()).html(lineNumbers);
+        J.currentCommit += 1;
+        J.loadCommit(J.currentCommit);
+        setTimeout(arguments.callee,0);
       }
     })();
   };
 
-  J.renderUp = function() {
-    var prevCommit = J.currentCommit;
-    J.currentCommit += 1;
-    J.modifyScreen(J.UP, J.HISTORY[J.currentCommit]);
-  };
+  J.renderCommit = function(n) {
+    if (J.READY) {
+      J.currentCommit = n;
 
-  J.renderDown = function() {
-    var prevCommit = J.currentCommit;
-    J.currentCommit -= 1;
-    J.modifyScreen(J.DOWN, J.HISTORY[J.currentCommit]);
-  };
-
-  J.modifyScreen = function(direction, commit) {
-
-    // If we've already generated this view, just set it and return...
-    if (J.SAVEPOINTS[J.currentCommit]) {
       J.SCREEN = J.SAVEPOINTS[J.currentCommit];
-      return;
+
+      $("#screen").html(J.SCREEN.join(""));
+      var commit = J.HISTORY[J.currentCommit];
+      $("#commitmsg").html(commit.message);
+      $("#commithash").html(commit.commit);
+      $("#date").html(commit.date);
+      $("#author").html(commit.author);
+      var lineNumbers ='';
+      for (var i=1; i<=J.MAX_LINES; i++) {
+        lineNumbers += ("<li>"+i+"</li>");
+      }
+      $("#linenumbers").height($("#screen").height()).html(lineNumbers);
     }
+  };
+
+  J.loadCommit = function(n) {
+    var commit = J.HISTORY[n];
 
     if (commit.patch) {
       var chunks = commit.patch.split(/^(?=@@ )/m).slice(1);
@@ -89,7 +73,6 @@ var JSGIT = {};
     J.SAVEPOINTS[J.currentCommit] = J.SCREEN.slice(0);
     var x = J.SAVEPOINTS[J.currentCommit].length;
     if (x > J.MAX_LINES) { J.MAX_LINES = x; }
-
   };
 
   J.applyChunk = function(chunk, author) {
@@ -125,25 +108,23 @@ var JSGIT = {};
     var textcommits = patches.split(/^(?=commit [0-9a-f]{40}$)/m);
     var commits = [];
 
-
-    for(var i = 0; i<textcommits.length; i++){
-      var tc = textcommits[i];
+    $.each(textcommits, function(i, tc) {
       commits[i] = {
         commit:  tc.match(/^commit .*$/m)[0].substr(7),
         author:  tc.match(/^Author: .*$/m)[0].substr(8),
         date:    tc.match(/^Date:   .*$/m)[0].substr(8),
         message: tc.split(/^$/m)[1].replace(/^    /mg,""),
-        patch:   tc.split(/^\+\+\+ b\/.*$/m)[1]
+        patch:   tc.split(/^\+\+\+ b\/.*$/m).slice(1).join('')
       };
-    }
+    });
 
-    return commits.reverse();
+    return commits;
   };
 
 })(JSGIT);
 
 $(function() {
-  JSGIT.renderHistory($("#history").text());
+  JSGIT.loadHistory($("#history").text());
   $("#nav").slider({
     max: JSGIT.HISTORY.length-1,
     value: JSGIT.HISTORY.length-1,

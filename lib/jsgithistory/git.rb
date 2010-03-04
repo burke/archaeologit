@@ -9,7 +9,7 @@ class Git
 
     result = ''
     FileUtils.cd( @path) do
-      result = `git log -p #{file}`
+      result = `git log --reverse -p #{file}`
     end
 
     result
