@@ -46,13 +46,15 @@ var JSGIT = {};
 
   J.renderCommit = function(n) {
     if (J.READY) {
-      var commit = J.HISTORY[n];
-      $("#screen").html(commit.rendered);
-      $("#commitmsg").html(commit.message);
-      $("#commithash").html(commit.commit);
-      $("#date").html(commit.date);
-      $("#author").html(commit.author);
-      $("#linenumbers").height($("#screen").height());
+      setTimeout(function() {
+        var commit = J.HISTORY[n];
+        $("#screen").html(commit.rendered);
+        $("#commitmsg").html(commit.message);
+        $("#commithash").html(commit.commit);
+        $("#date").html(commit.date);
+        $("#author").html(commit.author);
+        $("#linenumbers").height($("#screen").height());
+      }, 0);
     }
   };
 
