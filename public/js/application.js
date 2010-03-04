@@ -77,6 +77,7 @@ var JSGIT = {};
     var lines = chunk.split(/\n/m);
     var header = lines[0];
     var pos;
+    var content;
     lines = lines.slice(1);
 
     if (parseInt(header.match(/\-\d*/)[0].substr(1),10) === 0) {
@@ -88,7 +89,8 @@ var JSGIT = {};
 
     while (lines[curr]) {
       if (lines[curr][0]=="+") {
-        J.SCREEN.splice(pos, 0, "<pre style='background-color:"+J.colourForAuthor(commit.author)+";'>"+lines[curr].slice(1)+"</pre>");
+        content = lines[curr].slice(1) || "&nbsp;";
+        J.SCREEN.splice(pos, 0, "<pre style='background-color:"+J.colourForAuthor(commit.author)+";'>"+content+"</pre>");
         pos += 1;
       } else if (lines[curr][0]=="-") {
         J.SCREEN.splice(pos, 1);
