@@ -24,6 +24,9 @@ module JSGitHistory
         haml :log
 
       elsif File.directory?(path)
+        unless params[:splat][0].empty? or params[:splat][0][-1].chr == "/"
+          redirect "/#{params[:repo]}/#{params[:splat]}/"
+        end
         
         entries = Dir.entries(path).reject do |entry|
           entry =~ /^\./
