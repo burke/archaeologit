@@ -3,13 +3,13 @@ var JSGIT = {};
 (function(J) {
 
   // public ///////////////////////////////////////////////////////////////////
-  J.numberOfCommits = function() {
-    return HISTORY.length;
-  };
-
-  J.loadHistory = function(patches) {
+  J.initialize = function(patches) {
     HISTORY = parsePatches(patches);
     preRenderCommits();
+  };
+
+  J.numberOfCommits = function() {
+    return HISTORY.length;
   };
 
   J.renderCommit = function(n) {
@@ -27,10 +27,10 @@ var JSGIT = {};
   };
 
   // private //////////////////////////////////////////////////////////////////
-  var HISTORY = [];
-  var SCREEN = [];
+  var HISTORY   = [];
+  var SCREEN    = [];
   var MAX_LINES = 0;
-  var READY = false;
+  var READY     = false;
 
   var colourForAuthor = (function() {
     var authors = {};
@@ -131,7 +131,7 @@ var JSGIT = {};
 })(JSGIT);
 
 $(function() {
-  JSGIT.loadHistory($("#history").text());
+  JSGIT.initialize($("#history").text());
   $("#nav").slider({
     max: JSGIT.numberOfCommits()-1,
     value: JSGIT.numberOfCommits()-1,
