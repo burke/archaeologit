@@ -1,4 +1,4 @@
-class Git
+class Git2
   def initialize(path)
     @path = path
   end
