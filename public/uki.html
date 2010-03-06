@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src='js/uki.cjs'></script>
+    <script src='js/uki-more.cjs'></script>
+    <script type='text/javascript' src='js/jquery-1.4.2.min.js'></script>
+    <script type='text/javascript' src='data.js'></script>
+    <script type='text/javascript' src='filter.js'></script>
+  </head>
+  <body>
+    <script type='text/javascript'>
+      $(function(){
+        var treedFileList = {
+          view: 'uki.more.view.TreeList', 
+            rect: '310 470', 
+            anchors: 'left top bottom right', 
+            data: data,
+            rowHeight: 22,
+            style: {fontSize: '12px'}};
+        
+        var leftChildViews = [
+          { view: 'Box', rect: '0 0 310 35', anchors: 'left top right', background: 'theme(panel)',
+              childViews: 
+                [{ view: 'TextField', rect: '3 5 304 25', anchors: 'left top right', placeholder: 'Search files..'}]
+          },
+          { view: 'ScrollPane', rect: '0 44 310 556', anchors: 'left top bottom right', 
+              childViews: treedFileList
+          }
+        ];
+        
+        uki({
+            view: 'HorizontalSplitPane', rect: '1000 600', anchors: 'left top right bottom',
+            handlePosition: 310, leftMin: 0, rightMin: 310,
+            leftChildViews: leftChildViews,
+            rightChildViews: [
+              { view: 'Slider', rect: '10 10 673 24', anchors: 'top right left' }]
+        }).attachTo( window, '1000 600' );
+        
+      
+        uki('TextField').change(function(event){
+            
+            var value = event.source.value();
+      
+            if(value==''){
+              newData = data;
+            }else{
+              newData = jQuery.extend(true,{},{data:data}).data;
+              newData = filter(newData,value);
+            }
+      
+          uki('uki.more.view.TreeList').data(newData);
+        });
+      });      
+    </script>
+  </body>
+</html>
