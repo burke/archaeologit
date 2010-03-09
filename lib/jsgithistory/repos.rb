@@ -15,7 +15,7 @@ module JSGitHistory
     end
 
     def self.shared_config_repos_path
-      path = App.root + '../shared/repositories.yml'
+      path = App.root + '../../shared/repositories.yml'
       path if File.exists?(path)
     end
 
