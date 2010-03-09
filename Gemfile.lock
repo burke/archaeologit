@@ -8,6 +8,10 @@ dependencies:
     group: 
     - :default
     version: = 2.2.20
+  racksh: 
+    group: 
+    - :default
+    version: ">= 0"
   rack: 
     group: 
     - :default
@@ -25,14 +29,18 @@ specs:
     version: 1.2.2
 - rack: 
     version: 1.1.0
+- rack-test: 
+    version: 0.5.3
 - sinatra: 
     version: 0.9.6
+- racksh: 
+    version: 0.9.7
 - haml: 
     version: 2.2.20
 - ruby-git: 
     version: 0.0.1
     source: 0
-hash: 1689f46b3dfcf158bea19e71fe7cd34e8060468c
+hash: a10e4a33802d9721738a1e169178fa2cd888f062
 sources: 
 - Git: 
     uri: git://github.com/stefanpenner/ruby-git.git
