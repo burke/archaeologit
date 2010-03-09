@@ -23,11 +23,10 @@ module JSGitHistory
       repo_path = Repos.all[params[:repo].to_sym]
       halt 404 unless repo_path
     
-      splat_path = path_from_splat(params[:splat])
-    
-      path = File.join(repo_path, splat_path)
+      path = path_from_splat(params[:splat])
 
       if File.file?(path)
+        puts  Git.repo(App.root + repo_path).log(:reverse,:p => path).inspect
         git_output = Git.repo(App.root + repo_path).log(:reverse,:p => path).run.join("\n")
         
         @log = CGI.escapeHTML(CGI.escapeHTML(git_output))

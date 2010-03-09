@@ -76,7 +76,8 @@ $(function(){
 
     if(!selected.children){
       path = '/'+ path.replace(/^(\.\/)/,''); //clean
-      uki('NativeIframe')[0].src('/'+repo+'/'+path);
+      console.log(repo+path);
+      uki('NativeIframe')[0].src('/'+repo+path);
     }
   };
 
