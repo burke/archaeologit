@@ -16,7 +16,7 @@
             anchors: 'left top bottom right', 
             data: data,
             rowHeight: 22,
-            style: {fontSize: '12px'}};
+            style: { fontSize: '12px' } };
         
         var leftChildViews = [
           { view: 'Box', rect: '0 0 310 35', anchors: 'left top right', background: 'theme(panel)',
@@ -49,8 +49,9 @@
               { id: 'viewer',view: 'uki.view.NativeIframe', rect: '0 0 683 600', anchors: 'top right left bottom',  background: '#D0D7E2' }]
         }).attachTo( window, '1000 600' );
         
-      
-        uki('TextField').change(function(event){
+
+
+        var search = function(event){
             
             var value = event.source.value();
       
@@ -62,14 +63,26 @@
             }
       
           uki('uki.more.view.TreeList').data(newData);
-        });
+        };
 
-        uki('uki.more.view.TreeList').click(function(event){
+        uki('TextField')
+          .keypress(search);
+
+        var openIframe =  function(event){
           var selected = this.listData()[this.selectedIndex()],
           path = selected.path +'/'+ selected.data;
-          path = '/'+ path.replace(/^(\.\/)/,'');
-          uki('NativeIframe')[0].src('http://0.0.0.0:9292/rails/'+path);
-        });
+
+          if(!selected.children){
+            path = '/'+ path.replace(/^(\.\/)/,'');
+            uki('NativeIframe')[0].src('http://0.0.0.0:9292/rails/'+path);
+          }
+        };
+
+        uki('TreeList')
+          .keypress(openIframe)
+          .keydown(openIframe)
+          .keyup(openIframe)
+          .click(openIframe);
       });      
     </script>
   </body>
