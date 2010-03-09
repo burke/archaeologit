@@ -21,35 +21,16 @@ module JSGitHistory
   
     get '/:repo/*' do 
       repo_path = Repos.all[params[:repo].to_sym]
+      puts repo_path
       halt 404 unless repo_path
     
       path = path_from_splat(params[:splat])
 
-      if File.file?(path)
-        puts  Git.repo(App.root + repo_path).log(:reverse,:p => path).inspect
+      full_path = repo_path + '/'+ path
+      if File.file?(full_path)
         git_output = Git.repo(App.root + repo_path).log(:reverse,:p => path).run.join("\n")
-        
         @log = CGI.escapeHTML(CGI.escapeHTML(git_output))
-
         haml :log
-
-      elsif File.directory?(path)
-        unless params[:splat][0].empty? or params[:splat][0][-1].chr == "/"
-          redirect "/#{params[:repo]}/#{params[:splat]}/"
-        end
-        
-        entries = Dir.entries(path).reject do |entry|
-          entry =~ /^\./
-        end.group_by do |file| 
-          File.directory?(File.join(path,file)) ? :directory : :file
-        end
-
-        @parent_directory = splat_path.sub(/\/$/,'').split('/')[0..-2].join('/')
-        @parent_directory = "/#{params[:repo]}/#{@parent_directory}/".sub('//','/')
-        @files   = entries[:file]      || []
-        @folders = entries[:directory] || []
-    
-        haml :index
       else 
         halt 404
       end
