@@ -21,7 +21,6 @@ module JSGitHistory
   
     get '/:repo/*' do 
       repo_path = Repos.all[params[:repo].to_sym]
-      puts repo_path
       halt 404 unless repo_path
     
       path = path_from_splat(params[:splat])
