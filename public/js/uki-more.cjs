@@ -128,7 +128,7 @@ uki.more.view.treeList.Render = uki.newClass(uki.view.list.Render, new function(
             '.${classPrefix}-opened i { top: -9px; }'
         ).render({ 
             classPrefix: this.classPrefix, 
-            imageSrc: 'i/arrows.png'  // should call uki.image here
+            imageSrc: '/i/arrows.png'  // should call uki.image here
         });
         uki.dom.createStylesheet(style);
     };

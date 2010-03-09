@@ -12,11 +12,17 @@ dependencies:
     group: 
     - :default
     version: ">= 0"
+  json: 
+    group: 
+    - :default
+    version: ">= 0"
   sinatra: 
     group: 
     - :default
     version: ">= 0"
 specs: 
+- json: 
+    version: 1.2.2
 - rack: 
     version: 1.1.0
 - sinatra: 
@@ -26,7 +32,7 @@ specs:
 - ruby-git: 
     version: 0.0.1
     source: 0
-hash: 92796da4e06ca46fea4cf8017a6322c2b1acec5d
+hash: 1689f46b3dfcf158bea19e71fe7cd34e8060468c
 sources: 
 - Git: 
     uri: git://github.com/stefanpenner/ruby-git.git

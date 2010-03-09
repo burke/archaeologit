@@ -1,4 +1,5 @@
 require 'cgi'
+require 'json'
 
 module JSGitHistory
   class Site < Sinatra::Application
@@ -7,10 +8,17 @@ module JSGitHistory
 
     set :haml, {:format => :html5}
 
-    get '/:repo' do
-      redirect "/#{params[:repo]}/"
+    get '/_tree' do
+      repo_path = Repos.all[params[:repo].to_sym]
+      halt 404 unless repo_path
+
+      Git.repo(repo_path).ls_to_hash(:r).to_json    
     end
-    
+
+    get '/:repo/' do
+      haml :repo
+    end
+  
     get '/:repo/*' do 
       repo_path = Repos.all[params[:repo].to_sym]
       halt 404 unless repo_path
