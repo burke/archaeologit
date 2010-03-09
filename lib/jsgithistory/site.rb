@@ -28,7 +28,7 @@ module JSGitHistory
       path = File.join(repo_path, splat_path)
 
       if File.file?(path)
-        git_output = Git.repo(repo_path).log(:reverse,:p => path).run.join("\n")
+        git_output = Git.repo(App.root + repo_path).log(:reverse,:p => path).run.join("\n")
         
         @log = CGI.escapeHTML(CGI.escapeHTML(git_output))
 
