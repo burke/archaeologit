@@ -15,9 +15,12 @@ module JSGitHistory
       Git.repo(repo_path).ls_to_hash(:r).to_json    
     end
 
+    #TODO Gzip this, send with better content type.
     get '/_treelog' do
-      Repos.all
-      Repos.histories[params[:repo].to_sym]
+      repo_path = Repos.all[params[:repo].to_sym]
+      halt 404 unless repo_path
+
+      JSON.dump(Git.repo(repo_path).repo_history())
     end
     
     get '/:repo/' do
