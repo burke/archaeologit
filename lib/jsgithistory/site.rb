@@ -15,6 +15,11 @@ module JSGitHistory
       Git.repo(repo_path).ls_to_hash(:r).to_json    
     end
 
+    get '/_treelog' do
+      Repos.all
+      Repos.histories[params[:repo].to_sym]
+    end
+    
     get '/:repo/' do
       haml :repo
     end
