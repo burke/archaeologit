@@ -2,11 +2,14 @@ $(function(){
   var data = data || [],
     repo = document.location.pathname.match(/^\/([^\/)]+)\//)[1];
 
+var render = uki.newClass(uki.more.view.treeList.Render, { setSelected: function(container, data, state, focus) { container.className = state ?  this.classPrefix + '-selected' : '' } })
+
   var treedFileList = {
     view: 'uki.more.view.TreeList',
       rect: '310 470',
       anchors: 'left top bottom right',
       data: data,
+      render: new render(),
       rowHeight: 22,
       style: { fontSize: '12px' } };
 
@@ -36,8 +39,7 @@ $(function(){
       leftChildViews: leftChildViews,
       rightChildViews: [
         { id: 'viewer',view: 'uki.view.NativeIframe', rect: '0 0 683 600', anchors: 'top right left bottom',  background: '#D0D7E2' },
-        { view: 'Box', rect: '700 500', anchors: 'left top right bottom', style: { zIndex: 101 }, id: 'dragOverlay', visible: false }]
-
+        { view: 'Box', rect: '683 600', anchors: 'left top right bottom', style: { zIndex: 101 }, id: 'dragOverlay', visible: false }]
   })
 
   // otherwise the iframe steals focus
@@ -53,7 +55,11 @@ $(function(){
 
   page.attachTo( window, '1000 600' );
 
-  var search = function(event){
+  var tree = uki('TreeList'),
+
+    textField = uki('TextField'),
+
+    search = function(event){
       var value = event.source.value();
 
       if(value==''){
@@ -63,22 +69,30 @@ $(function(){
         newData = filter(newData,value);
       }
 
-    uki('uki.more.view.TreeList').data(newData);
-  };
+      uki('uki.more.view.TreeList').data(newData);
+    }, 
 
-  uki('TextField')
+    openIframe =  function(e){
+      if(e.domEvent.which !== 13 && e.domEvent.which !== 1){
+        return ;
+      }
+
+      var selected = this.listData()[this.selectedIndex()],
+      path = selected.path +'/'+ selected.data;
+
+      if(!selected.children){
+        path = "/" + path.replace(/^\/?(\.\/)/,''); //clean
+        uki('NativeIframe')[0].src('/'+repo+path);
+      }
+    };
+
+  textField
     .keypress(search)
     .keyup(search);
-
-  var openIframe =  function(event){
-    var selected = this.listData()[this.selectedIndex()],
-    path = selected.path +'/'+ selected.data;
-
-    if(!selected.children){
-      path = "/" + path.replace(/^\/?(\.\/)/,''); //clean
-      uki('NativeIframe')[0].src('/'+repo+path);
-    }
-  };
+  
+  textField.bind('keypress keydown keyup', function(e) { 
+    tree.trigger(e.domEvent.type, e); 
+  });
 
   uki('TreeList')
     .keypress(openIframe)
