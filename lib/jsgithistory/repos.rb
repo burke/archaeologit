@@ -8,7 +8,6 @@ module JSGitHistory
     def self.histories
       @histories
     end
-
     
     def self.all
       @all ||= YAML.load_file(user_config_repos_path || shared_config_repos_path || app_config_repos_path)
