@@ -4,7 +4,7 @@ set :repository,  "git@github.com:burke/jsgithistory.git"
 set :scm, :git
 set :deploy_to, '/srv/rack/jsgithistory.53cr.com/'
 set :use_sudo, false
-set :branch, "test"
+set :branch, "master"
 
 server "jsgithistory.53cr.com", :app, :web, :db, :primary => true
 
