@@ -29,6 +29,7 @@ var JSGIT = {};
         }, 0);
       }
     }
+    return HISTORY[n];
   };
 
   J.playback = function(timeout) {
