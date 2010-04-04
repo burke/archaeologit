@@ -15,6 +15,13 @@ module JSGitHistory
       Git.repo(repo_path).ls_to_hash(:r).to_json    
     end
 
+    get '/:repo/_authors' do
+      repo_path = Repos.all[params[:repo].to_sym]
+      halt 404 unless repo_path
+
+      Git.repo(repo_path).authors.to_json
+    end
+
     #TODO Gzip this, send with better content type.
     get '/_treelog' do
       repo_path = Repos.all[params[:repo].to_sym]

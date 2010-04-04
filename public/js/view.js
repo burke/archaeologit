@@ -1,3 +1,13 @@
+var JSGITProxy = JSGITProxy || {};
+
+(function(lib){
+  lib.html = function(){
+    return $('iframe').eq(0).contents().find('html');
+  };
+})(JSGITProxy);
+
+
+
 $(function(){
   var data = data || [],
     repo = document.location.pathname.match(/^\/([^\/)]+)\//)[1];

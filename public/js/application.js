@@ -8,6 +8,16 @@ var JSGIT = {};
     preRenderCommits();
   };
 
+  function toggleAuthorsCode(){
+    $('#sidebar li').toggle(function(){
+      var name = $(this).addClass('codeHidden').attr('data-name');
+      $('.loc[data-author='+name+']').hide();
+    },function(){
+      var name = $(this).removeClass('codeHidden').attr('data-name');
+      $('.loc[data-author='+name+']').show();
+    });
+  }
+
   J.numberOfCommits = function() {
     return HISTORY.length;
   };
@@ -50,7 +60,7 @@ var JSGIT = {};
     BUSY      = false;
 
   var colourForAuthor = (function() {
-    var authors = {};
+    JSGIT.authors = authors ={};
     var nextColour = (function() {
       var counter = -1;
       var colours = [
@@ -64,14 +74,17 @@ var JSGIT = {};
       };
     })();
     return function(author) {
-      author = author.replace(/ <.*>/,''); // don't show the email -- too long.
       if (! authors[author]) {
         authors[author] = nextColour();
-        $("#sidebar").append("<li style='background-color:"+authors[author]+";'>"+author+"</li>");
+        $("#sidebar").append("<li data-name='"+toSnakeCase(author)+"'style='background-color:"+authors[author]+";'>"+author+"</li>");
       }
       return authors[author];
     };
   })();
+
+  function toSnakeCase(s){
+    return s.replace(/\s/gi,'_');
+  }
 
   function preRenderCommits() {
     var current = -1;
@@ -85,6 +98,8 @@ var JSGIT = {};
         READY = true;
         $("#linenumbers").html(lineNumbers);
         J.renderCommit(current);
+
+        toggleAuthorsCode();
       } else {
         current += 1;
         loadCommit(current);
@@ -122,7 +137,7 @@ var JSGIT = {};
 
     while (lines[curr]) {
       if (lines[curr][0]=="+") {
-        SCREEN.splice(pos, 0, "<pre style='background-color:"+colourForAuthor(commit.author)+";'>"+(lines[curr].slice(1) || "&nbsp;")+"</pre>");
+        SCREEN.splice(pos, 0, "<pre class='loc' data-author='"+toSnakeCase(commit.author)+"'style='background-color:"+colourForAuthor(commit.author)+";'>"+(lines[curr].slice(1) || "&nbsp;")+"</pre>");
       } else if (lines[curr][0]=="-") {
         SCREEN.splice(pos, 1);
         pos -= 1;
@@ -139,19 +154,20 @@ var JSGIT = {};
     $.each(textcommits, function(i, tc) {
       commits[i] = {
         commit:  tc.match(/^commit .*$/m)[0].substr(7),
-        author:  tc.match(/^Author: .*$/m)[0].substr(8),
+        author:  tc.match(/^Author: .*$/m)[0].substr(8).replace(/ <.*>/,'').replace(/ &lt;.+&gt;/,''),
         date:    tc.match(/^Date:   .*$/m)[0].substr(8),
         message: tc.split(/^$/m)[1].replace(/^    /mg,""),
         patch:   tc.split(/^\+\+\+ b\/.*$/m)[1]
       };
     });
-
     return commits;
   };
 
 })(JSGIT);
 
 $(function() {
+  // toggle code when clicking on an Authors Name  
+ 
   JSGIT.initialize($("#history").text());
   $("#nav").slider({
     max:   JSGIT.numberOfCommits()-1,

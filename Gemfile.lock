@@ -3,7 +3,7 @@ dependencies:
   ruby-git: 
     group: 
     - :default
-    version: ">= 0"
+    version: = 0.1.0
   haml: 
     group: 
     - :default
@@ -25,26 +25,28 @@ dependencies:
     - :default
     version: ">= 0"
 specs: 
+- haml: 
+    version: 2.2.20
 - json: 
-    version: 1.2.2
+    version: 1.2.3
 - rack: 
     version: 1.1.0
 - rack-test: 
     version: 0.5.3
-- sinatra: 
-    version: 0.9.6
 - racksh: 
     version: 0.9.7
-- haml: 
-    version: 2.2.20
 - ruby-git: 
-    version: 0.0.2
+    version: 0.1.0
     source: 0
-hash: a10e4a33802d9721738a1e169178fa2cd888f062
+- sinatra: 
+    version: "1.0"
+hash: e4e4b36910a51906e511c99e18fd237be1c6e7ad
 sources: 
 - Git: 
+    name: ruby-git
     uri: git://github.com/stefanpenner/ruby-git.git
+    version: 0.1.0
     git: git://github.com/stefanpenner/ruby-git.git
-    ref: 96ffc1229d64737b5fd87ebf000b65f5ec5e6b5a
+    ref: eca5ca388d3bac81f454cf5d12df1400ac1b0b02
 - Rubygems: 
     uri: http://gemcutter.org

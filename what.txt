@@ -1,0 +1,10 @@
+Web Base visualizer for projects stored in git, it allows you to browser each file over time via slider.
+
+My project for this class will be to build a better way to search for "stuff".
+
+It works with linux core
+
+
+The plan is to allow searching by commit id's comit ranges, date ranges, files, authors.
+
+So the work for this class will be using something like an expert system to interpret what the user is actually asking for, with an amazon style single search box.
