@@ -8,30 +8,6 @@ var JSGIT = {};
     preRenderCommits();
   };
 
-  function toggleAuthorsCode(){
-    $('#sidebar li').toggle(function(){
-      var name = $(this).addClass('codeHidden').attr('data-name'),
-        lineNumbers = $('#linenumbers li'),
-        pre = $('pre');
-
-      $('.loc[data-author='+name+']').hide().each(function(i,e){
-        var count = pre.index(e);
-        console.log(count);
-        lineNumbers.eq(count).hide();
-      })
-    },function(){
-      var name = $(this).removeClass('codeHidden').attr('data-name'),
-        lineNumbers = $('#linenumbers li'),
-        pre = $('pre');
-
-      $('.loc[data-author='+name+']').show().each(function(i,e){
-        var count = pre.index(e);  
-        lineNumbers.eq(count).show();
-      });
-      
-    });
-  }
-
   J.numberOfCommits = function() {
     return HISTORY.length;
   };
@@ -90,7 +66,7 @@ var JSGIT = {};
     return function(author) {
       if (! authors[author]) {
         authors[author] = nextColour();
-        $("#sidebar").append("<li data-name='"+toSnakeCase(author)+"'style='background-color:"+authors[author]+";'>"+author+"</li>");
+        $("#sidebar").append("<li data-name='"+toSnakeCase(author)+"'style='background-color:"+authors[author]+";'><input checked type='checkbox' name='vehicle' value='Car' />"+author+"</li>");
       }
       return authors[author];
     };
@@ -106,14 +82,12 @@ var JSGIT = {};
     (function(){
       if(HISTORY.length-1 == current){
         var lineNumbers ='';
-        for (var i=1; i<MAX_LINES; i++) {
+        for (var i=1; i<=MAX_LINES; i++) {
           lineNumbers += ("<li>"+i+"</li>");
         }
         READY = true;
         $("#linenumbers").html(lineNumbers);
         J.renderCommit(current);
-
-        toggleAuthorsCode();
       } else {
         current += 1;
         loadCommit(current);
@@ -181,7 +155,26 @@ var JSGIT = {};
 
 $(function() {
   // toggle code when clicking on an Authors Name  
- 
+  $('#sidebar li :checkbox').live('change',function(){
+    var el = $(this), 
+      checked = el.attr('checked'), 
+      authorName = el.parent().attr('data-name'),
+      lineNumbers = $('#linenumbers li'),
+      pre = $('pre');
+
+    if(checked){
+      $('.loc[data-author='+authorName+']').show().each(function(i,e){
+        var count = pre.index(e);
+        lineNumbers.eq(count).show();
+      });
+    }else{
+      $('.loc[data-author='+authorName+']').hide().each(function(i,e){
+        var count = pre.index(e);
+        lineNumbers.eq(count).hide();
+      });
+    }
+  }); 
+
   JSGIT.initialize($("#history").text());
   $("#nav").slider({
     max:   JSGIT.numberOfCommits()-1,
