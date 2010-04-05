@@ -10,11 +10,25 @@ var JSGIT = {};
 
   function toggleAuthorsCode(){
     $('#sidebar li').toggle(function(){
-      var name = $(this).addClass('codeHidden').attr('data-name');
-      $('.loc[data-author='+name+']').hide();
+      var name = $(this).addClass('codeHidden').attr('data-name'),
+        lineNumbers = $('#linenumbers li'),
+        pre = $('pre');
+
+      $('.loc[data-author='+name+']').hide().each(function(i,e){
+        var count = pre.index(e);
+        console.log(count);
+        lineNumbers.eq(count).hide();
+      })
     },function(){
-      var name = $(this).removeClass('codeHidden').attr('data-name');
-      $('.loc[data-author='+name+']').show();
+      var name = $(this).removeClass('codeHidden').attr('data-name'),
+        lineNumbers = $('#linenumbers li'),
+        pre = $('pre');
+
+      $('.loc[data-author='+name+']').show().each(function(i,e){
+        var count = pre.index(e);  
+        lineNumbers.eq(count).show();
+      });
+      
     });
   }
 
@@ -92,7 +106,7 @@ var JSGIT = {};
     (function(){
       if(HISTORY.length-1 == current){
         var lineNumbers ='';
-        for (var i=1; i<=MAX_LINES; i++) {
+        for (var i=1; i<MAX_LINES; i++) {
           lineNumbers += ("<li>"+i+"</li>");
         }
         READY = true;
