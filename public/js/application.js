@@ -3,8 +3,14 @@ var JSGIT = {};
 (function(J) {
 
   var colourCounter = -1;
-
+  // private //////////////////////////////////////////////////////////////////
+  var HISTORY = [],
+    SCREEN    = [],
+    MAX_LINES = 0,
+    READY     = false,
+    BUSY      = false;
   J.authors = {};
+
   J.initialize = function(patches) {
     J.authors = {};
     colourCount = -1;
@@ -77,12 +83,7 @@ var JSGIT = {};
     })();
   };
 
-  // private //////////////////////////////////////////////////////////////////
-  var HISTORY = [],
-    SCREEN    = [],
-    MAX_LINES = 0,
-    READY     = false,
-    BUSY      = false;
+
 
   var colourForAuthor = (function() {
 
