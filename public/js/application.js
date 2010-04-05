@@ -13,6 +13,11 @@ var JSGIT = {};
 
   J.initialize = function(patches) {
     J.authors = {};
+    HISTORY = [];
+    SCREEN    = [];
+    MAX_LINES = 0;
+    READY     = false;
+    BUSY      = false;
     colourCount = -1;
     HISTORY = parsePatches(patches);
     preRenderCommits();
