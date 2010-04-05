@@ -6,8 +6,6 @@ var JSGITProxy = JSGITProxy || {};
   };
 })(JSGITProxy);
 
-
-
 $(function(){
   var data = data || [],
     repo = document.location.pathname.match(/^\/([^\/)]+)\//)[1];
@@ -31,14 +29,19 @@ var render = uki.newClass(uki.more.view.treeList.Render, { setSelected: function
     {view: 'ScrollPane', rect: '0 44 310 556', anchors: 'left top bottom right', childViews: treedFileList}
   ];
 
-  uki.view.NativeIframe = uki.newClass(uki.view.Base, new function() {
-      this.typeName = function() { return 'uki.view.NativeIframe'; };
+  uki.view.JSGIT = uki.newClass(uki.view.Base, new function() {
+      this.typeName = function() { return 'uki.view.JSGIT'; };
 
       this._createDom = function() {
-          this._dom = uki.createElement('iframe', this.defaultCss + 'border:none;left:0;top:0;width:100%;height:100%');
+          this._dom = uki.createElement('div', this.defaultCss + 'border:none;left:0;top:0;width:100%;height:100%');
       };
 
       uki.delegateProp(this, 'src', '_dom');
+      this.load = function(path){
+        $(this._dom).load('/'+repo+path,function(){
+          JSGIT.initialize($("#history").text());
+        });
+      };
 
       this._layoutDom = function() {};
   });
@@ -48,7 +51,7 @@ var render = uki.newClass(uki.more.view.treeList.Render, { setSelected: function
       handlePosition: 310, leftMin: 0, rightMin: 310,
       leftChildViews: leftChildViews,
       rightChildViews: [
-        { id: 'viewer',view: 'uki.view.NativeIframe', rect: '0 0 683 600', anchors: 'top right left bottom',  background: '#D0D7E2' },
+        { id: 'viewer',view: 'uki.view.JSGIT', rect: '0 0 683 600', anchors: 'top right left bottom',  background: '#D0D7E2' },
         { view: 'Box', rect: '683 600', anchors: 'left top right bottom', style: { zIndex: 101 }, id: 'dragOverlay', visible: false }]
   })
 
@@ -92,7 +95,7 @@ var render = uki.newClass(uki.more.view.treeList.Render, { setSelected: function
 
       if(!selected.children){
         path = "/" + path.replace(/^\/?(\.\/)/,''); //clean
-        uki('NativeIframe')[0].src('/'+repo+path);
+        uki('JSGIT')[0].load(path);
       }
     };
 

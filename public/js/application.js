@@ -2,10 +2,39 @@ var JSGIT = {};
 
 (function(J) {
 
-  // public ///////////////////////////////////////////////////////////////////
   J.initialize = function(patches) {
     HISTORY = parsePatches(patches);
     preRenderCommits();
+$("#nav").slider({
+    max:   JSGIT.numberOfCommits()-1,
+    value: JSGIT.numberOfCommits()-1,
+    change: function(event, ui){
+      JSGIT.renderCommit(ui.value, true);
+    },
+    slide: function(event, ui){
+      JSGIT.renderCommit(ui.value, false);
+    }
+  });
+
+    $('#sidebar li :checkbox').live('change',function(){
+      var el = $(this), 
+        checked = el.attr('checked'), 
+        authorName = el.val(),
+        lineNumbers = $('#linenumbers li'),
+        loc = $('.loc');
+
+      if(checked){
+        $('.loc[data-author='+authorName+']').show().each(function(i,e){
+          var count = loc.index(e);
+          lineNumbers.eq(count).show();
+        });
+      }else{
+        $('.loc[data-author='+authorName+']').hide().each(function(i,e){
+          var count = loc.index(e);
+          lineNumbers.eq(count).hide();
+        });
+      }
+    });
   };
 
   J.numberOfCommits = function() {
@@ -66,7 +95,7 @@ var JSGIT = {};
     return function(author) {
       if (! authors[author]) {
         authors[author] = nextColour();
-        $("#sidebar").append("<li data-name='"+toSnakeCase(author)+"'style='background-color:"+authors[author]+";'><input checked type='checkbox' name='vehicle' value='Car' />"+author+"</li>");
+        $("#sidebar").append("<li style='background-color:"+authors[author]+";'><input checked type='checkbox' name='author' value='"+toSnakeCase(author)+"' />"+author+"</li>");
       }
       return authors[author];
     };
@@ -82,7 +111,7 @@ var JSGIT = {};
     (function(){
       if(HISTORY.length-1 == current){
         var lineNumbers ='';
-        for (var i=1; i<=MAX_LINES; i++) {
+        for (var i=1; i<MAX_LINES; i++) {
           lineNumbers += ("<li>"+i+"</li>");
         }
         READY = true;
@@ -155,35 +184,6 @@ var JSGIT = {};
 
 $(function() {
   // toggle code when clicking on an Authors Name  
-  $('#sidebar li :checkbox').live('change',function(){
-    var el = $(this), 
-      checked = el.attr('checked'), 
-      authorName = el.parent().attr('data-name'),
-      lineNumbers = $('#linenumbers li'),
-      pre = $('pre');
-
-    if(checked){
-      $('.loc[data-author='+authorName+']').show().each(function(i,e){
-        var count = pre.index(e);
-        lineNumbers.eq(count).show();
-      });
-    }else{
-      $('.loc[data-author='+authorName+']').hide().each(function(i,e){
-        var count = pre.index(e);
-        lineNumbers.eq(count).hide();
-      });
-    }
-  }); 
-
+ 
   JSGIT.initialize($("#history").text());
-  $("#nav").slider({
-    max:   JSGIT.numberOfCommits()-1,
-    value: JSGIT.numberOfCommits()-1,
-    change: function(event, ui){
-      JSGIT.renderCommit(ui.value, true);
-    },
-    slide: function(event, ui){
-      JSGIT.renderCommit(ui.value, false);
-    }
   });
-});
