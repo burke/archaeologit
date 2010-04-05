@@ -2,19 +2,25 @@ var JSGIT = {};
 
 (function(J) {
 
+  var colourCounter = -1;
+
+  J.authors = {};
   J.initialize = function(patches) {
+    J.authors = {};
+    colourCount = -1;
     HISTORY = parsePatches(patches);
     preRenderCommits();
-$("#nav").slider({
-    max:   JSGIT.numberOfCommits()-1,
-    value: JSGIT.numberOfCommits()-1,
-    change: function(event, ui){
-      JSGIT.renderCommit(ui.value, true);
-    },
-    slide: function(event, ui){
-      JSGIT.renderCommit(ui.value, false);
-    }
-  });
+
+    $("#nav").slider({
+        max:   JSGIT.numberOfCommits()-1,
+        value: JSGIT.numberOfCommits()-1,
+        change: function(event, ui){
+          JSGIT.renderCommit(ui.value, true);
+        },
+        slide: function(event, ui){
+          JSGIT.renderCommit(ui.value, false);
+        }
+      });
 
     $('#sidebar li :checkbox').live('change',function(){
       var el = $(this), 
@@ -79,30 +85,33 @@ $("#nav").slider({
     BUSY      = false;
 
   var colourForAuthor = (function() {
-    JSGIT.authors = authors ={};
+
     var nextColour = (function() {
-      var counter = -1;
       var colours = [
         "#ffc", "#fcf", "#cff", "#ccf", "#cfc", "#fcc",
         "#cca", "#cac", "#acc", "#aac", "#aca", "#caa",
         "#aa8", "#a8a", "#8aa", "#88a", "#8a8", "#a88"
       ];
       return function() {
-        counter += 1;
-        return colours[counter % colours.length];
+        colourCounter += 1;
+        return colours[colourCounter % colours.length];
       };
     })();
     return function(author) {
-      if (! authors[author]) {
-        authors[author] = nextColour();
-        $("#sidebar").append("<li style='background-color:"+authors[author]+";'><input checked type='checkbox' name='author' value='"+toSnakeCase(author)+"' />"+author+"</li>");
+    var name = author,
+     snakeAuthor = toSnakeCase(author);
+
+      if (!J.authors[author]) {
+        J.authors[author] = nextColour();
+       
+        $("#sidebar").append("<li style='background-color:"+J.authors[author]+";' data-email='"+snakeAuthor+"'><input checked type='checkbox' name='author' value='"+snakeAuthor+"' />"+author+"</li>");
       }
-      return authors[author];
+      return J.authors[author];
     };
   })();
 
   function toSnakeCase(s){
-    return s.replace(/\s/gi,'_');
+    return s.replace(/\s+$/gi,'').replace(/\s/gi,'_').replace(/<|>|&lt;|&gt;/gi,'');
   }
 
   function preRenderCommits() {
@@ -123,7 +132,7 @@ $("#nav").slider({
         setTimeout(arguments.callee, 0);
       }
     })();
-  };
+  }
 
   function loadCommit(n) {
     var commit = HISTORY[n];
@@ -137,7 +146,7 @@ $("#nav").slider({
 
     commit.rendered = SCREEN.join("");
     if (SCREEN.length > MAX_LINES) { MAX_LINES = SCREEN.length; }
-  };
+  }
 
   function applyChunk(commit, chunk) {
     var lines = chunk.split(/\n/m);
@@ -162,7 +171,7 @@ $("#nav").slider({
       curr += 1;
       pos += 1;
     }
-  };
+  }
 
   function parsePatches(patches) {
     var textcommits = patches.split(/^(?=commit [0-9a-f]{40}$)/m);
@@ -171,7 +180,7 @@ $("#nav").slider({
     $.each(textcommits, function(i, tc) {
       commits[i] = {
         commit:  tc.match(/^commit .*$/m)[0].substr(7),
-        author:  tc.match(/^Author: .*$/m)[0].substr(8).replace(/ <.*>/,'').replace(/ &lt;.+&gt;/,''),
+        author:  tc.match(/^Author: .*$/m)[0].substr(8),
         date:    tc.match(/^Date:   .*$/m)[0].substr(8),
         message: tc.split(/^$/m)[1].replace(/^    /mg,""),
         patch:   tc.split(/^\+\+\+ b\/.*$/m)[1]
@@ -184,6 +193,5 @@ $("#nav").slider({
 
 $(function() {
   // toggle code when clicking on an Authors Name  
- 
   JSGIT.initialize($("#history").text());
-  });
+});
