@@ -36,6 +36,17 @@ module JSGitHistory
     def github_url
       "http://github.com/#{@user}/#{@repo}.git"
     end 
+
+    # attempt to prevent traversal
+    def no_traverse(path)
+      return '/' unless path and path.first
+   
+      path = path.first
+      safe_depth =      path.scan(/\/[\w_]/).length
+      attempted_depth = path.scan(/\.\.\//).length
+   
+      safe_depth >= attempted_depth ? path : '/'
+    end
     
     def path
       "#{REPO_DIR}/#{@user}/#{@repo}"
