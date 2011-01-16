@@ -1,4 +1,5 @@
 require 'yaml'
+require 'fileutils'
 
 module JSGitHistory
   class Repository
@@ -15,11 +16,17 @@ module JSGitHistory
     def clone
       system("git", "clone", github_url, local_path)
     end 
+
+    def pull
+      FileUtils.cd(local_path) do
+        system("git", "pull")
+      end       
+    end 
     
     def initialize(user, repo)
       @user = user
       @repo = repo
-      clone unless local_copy_exists?
+      local_copy_exists? ? pull : clone
     end 
 
     def local_path
