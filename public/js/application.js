@@ -4,20 +4,20 @@ var JSGIT = {};
 
   var colourCounter = -1;
   // private //////////////////////////////////////////////////////////////////
-  var HISTORY = [],
-    SCREEN    = [],
-    MAX_LINES = 0,
-    READY     = false,
-    BUSY      = false;
+  var HISTORY   = [],
+    SCREEN      = [],
+    MAX_LINES   = 0,
+    READY       = false,
+    BUSY        = false;
   J.authors = {};
 
   J.initialize = function(patches) {
-    J.authors = {};
-    HISTORY = [];
-    SCREEN    = [];
-    MAX_LINES = 0;
-    READY     = false;
-    BUSY      = false;
+    J.authors   = {};
+    HISTORY     = [];
+    SCREEN      = [];
+    MAX_LINES   = 0;
+    READY       = false;
+    BUSY        = false;
     colourCount = -1;
     HISTORY = parsePatches(patches);
     preRenderCommits();
@@ -33,9 +33,10 @@ var JSGIT = {};
         }
       });
 
+    /*
     $('#sidebar li :checkbox').live('change',function(){
-      var el = $(this), 
-        checked = el.attr('checked'), 
+      var el = $(this),
+        checked = el.attr('checked'),
         authorName = el.val(),
         lineNumbers = $('#linenumbers li'),
         loc = $('.loc');
@@ -52,6 +53,8 @@ var JSGIT = {};
         });
       }
     });
+     */
+
   };
 
   J.numberOfCommits = function() {
@@ -89,6 +92,13 @@ var JSGIT = {};
   };
 
 
+  var colourForAge = function(commit) {
+    var recency = commit.seqnum / J.numberOfCommits();
+    var red   = 255 - Math.round(128 * recency);
+    var green = 255 - Math.round(128 * recency);
+    var blue  = 255 - 0;
+    return 'rgb(' + red + ',' + green + ',' + blue + ')';
+  };
 
   var colourForAuthor = (function() {
 
@@ -109,8 +119,8 @@ var JSGIT = {};
 
       if (!J.authors[author]) {
         J.authors[author] = nextColour();
-       
-        $("#sidebar").append("<li style='background-color:"+J.authors[author]+";' data-email='"+snakeAuthor+"'><input checked type='checkbox' name='author' value='"+snakeAuthor+"' />"+author+"</li>");
+
+        // $("#sidebar").append("<li style='background-color:"+J.authors[author]+";' data-email='"+snakeAuthor+"'><input checked type='checkbox' name='author' value='"+snakeAuthor+"' />"+author+"</li>");
       }
       return J.authors[author];
     };
@@ -169,7 +179,7 @@ var JSGIT = {};
 
     while (lines[curr]) {
       if (lines[curr][0]=="+") {
-        SCREEN.splice(pos, 0, "<pre class='loc' data-author='"+toSnakeCase(commit.author)+"'style='background-color:"+colourForAuthor(commit.author)+";'>"+(lines[curr].slice(1) || "&nbsp;")+"</pre>");
+        SCREEN.splice(pos, 0, "<pre class='loc' data-author='"+toSnakeCase(commit.author)+"'style='background-color:"+colourForAge(commit)+";'>"+(lines[curr].slice(1) || "&nbsp;")+"</pre>");
       } else if (lines[curr][0]=="-") {
         SCREEN.splice(pos, 1);
         pos -= 1;
@@ -189,7 +199,8 @@ var JSGIT = {};
         author:  tc.match(/^Author: .*$/m)[0].substr(8),
         date:    tc.match(/^Date:   .*$/m)[0].substr(8),
         message: tc.split(/^$/m)[1].replace(/^    /mg,""),
-        patch:   tc.split(/^\+\+\+ b\/.*$/m)[1]
+        patch:   tc.split(/^\+\+\+ b\/.*$/m)[1],
+        seqnum:  i
       };
     });
     return commits;
@@ -198,6 +209,6 @@ var JSGIT = {};
 })(JSGIT);
 
 $(function() {
-  // toggle code when clicking on an Authors Name  
+  // toggle code when clicking on an Authors Name
   JSGIT.initialize($("#history").text());
 });
