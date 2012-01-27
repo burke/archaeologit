@@ -1,7 +1,8 @@
+window.toSnakeCase = (s) ->
+  s.replace(/\s+$/g, "").replace(/\s/g, "_").replace /<|>|&lt;|&gt;/g, ""
+
 JSGIT = {}
 ((J) ->
-  toSnakeCase = (s) ->
-    s.replace(/\s+$/g, "").replace(/\s/g, "_").replace /<|>|&lt;|&gt;/g, ""
   preRenderCommits = ->
     current = -1
     (->
@@ -39,7 +40,7 @@ JSGIT = {}
     curr = 0
     while lines[curr]
       if lines[curr][0] is "+"
-        SCREEN.splice pos, 0, "<pre class='loc' data-author='" + toSnakeCase(commit.author) + "'style='background-color:" + colourForAge(commit) + ";'>" + (lines[curr].slice(1) or "&nbsp;") + "</pre>"
+        SCREEN.splice pos, 0, "<pre class='loc' data-author='" + window.toSnakeCase(commit.author) + "'style='background-color:" + colourForAge(commit) + ";'>" + (lines[curr].slice(1) or "&nbsp;") + "</pre>"
       else if lines[curr][0] is "-"
         SCREEN.splice pos, 1
         pos -= 1
@@ -131,10 +132,10 @@ JSGIT = {}
     )()
     (author) ->
       name = author
-      snakeAuthor = toSnakeCase(author)
+      snakeAuthor = window.toSnakeCase(author)
       J.authors[author] = nextColour()  unless J.authors[author]
       J.authors[author]
   )()
 ) JSGIT
-$ ->
-  JSGIT.initialize $("#history").text()
+
+$ -> JSGIT.initialize $("#history").text()
