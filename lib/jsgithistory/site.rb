@@ -2,7 +2,7 @@ require 'cgi'
 require 'sinatra'
 
 module JSGitHistory
-  ROOT = Pathname.new(File.expand_path('../../../',__FILE__))
+  ROOT = Pathname.new(File.expand_path('../../../', __FILE__))
 
   class Site < Sinatra::Application
     set :public, ROOT + 'public'
