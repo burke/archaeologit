@@ -1,7 +1,7 @@
 require 'cgi'
 require 'sinatra'
 
-module JSGitHistory
+module Archaeologit
   ROOT = Pathname.new(File.expand_path('../../../', __FILE__))
 
   class Site < Sinatra::Application

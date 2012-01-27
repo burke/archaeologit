@@ -1,7 +1,7 @@
 require 'open3'
 require 'fileutils'
 
-module JSGitHistory
+module Archaeologit
   class Repository
     REPO_DIR = Pathname.new("/Users/burke/jsgh_repos")
 

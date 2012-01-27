@@ -8,6 +8,6 @@ use Rack::Coffee, {
   :urls => '/js'
 }
 
-require File.expand_path('../lib/jsgithistory', __FILE__)
-run JSGitHistory::Site.new
+require File.expand_path('../lib/archaeologit', __FILE__)
+run Archaeologit::Site.new
 
