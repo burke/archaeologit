@@ -1,3 +1,7 @@
+# TODO: Lots more refactoring and tests.
+# And features.
+# And bugs.
+
 window.toSnakeCase = (s) ->
   s.replace(/\s+$/g, "").replace(/\s/g, "_").replace /<|>|&lt;|&gt;/g, ""
 
@@ -101,5 +105,5 @@ class Archaeologit
     blue = 255 - 0
     "rgb(" + red + "," + green + "," + blue + ")"
 
-$ -> window.archaeologit = new Archaeologit $("#history").text()
+$ -> new Archaeologit $("#history").text()
 
