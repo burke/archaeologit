@@ -12,11 +12,8 @@ module JSGitHistory
 
     get '/:repo/:ref/*' do
       repo = Repository.new(params[:repo])
-
       path = path_from_splat(params[:splat])
-
       git_output = repo.log_stuff(params[:ref], path)
-
       @log = CGI.escapeHTML(CGI.escapeHTML(git_output))
       erb :log
     end
