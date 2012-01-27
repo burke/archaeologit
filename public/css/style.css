@@ -36,6 +36,10 @@ pre {
    margin: 0 20px 0 20px;
 }
 
+#slider {
+  width: 100%;
+}
+
 #footer {
    font-family: HelveticaNeue-Light, helvetica, arial, sans;
    font-size: 18px;

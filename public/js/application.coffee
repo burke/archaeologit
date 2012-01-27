@@ -69,11 +69,11 @@ class Archaeologit
       pos += 1
 
   bindSlider: ->
-    $("#nav").slider
-      max:   @numberOfCommits() - 1
-      value: @numberOfCommits() - 1
-      change: (event, ui) => @renderCommit ui.value, true
-      slide:  (event, ui) => @renderCommit ui.value, false
+    $("#slider").
+      attr("max", @numberOfCommits()).
+      val(@numberOfCommits()).
+      change((e) => @renderCommit $(e.target).val(), false)
+    #change: (event, ui) => @renderCommit ui.value, true
 
   numberOfCommits: ->
     @history.length

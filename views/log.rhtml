@@ -4,16 +4,16 @@
     <meta content='text/html; charset=utf-8' http-equiv='Content-Type' />
     <title>Git History Viewer</title>
     <link href='/css/style.css' rel='Stylesheet' />
-    <link href='/css/ui-darkness/jquery-ui-1.8rc3.custom.css' rel='Stylesheet' />
     <script type='text/javascript' src='/js/jquery-1.4.2.min.js'></script>
-    <script src='/js/jquery-ui-1.8rc3.custom.min.js'></script>
     <script src='/js/application.js'></script>
   </head>
   <body>
     <div id="spinner"></div>
     <div id='container'>
       <div id='header'>
-        <div id='nav'></div>
+        <div id='nav'>
+          <input id="slider" type="range" step="1" min="0">
+        </div>
       </div>
       <div id='content'>
         <ul id='linenumbers'></ul>
