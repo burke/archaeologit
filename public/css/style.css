@@ -52,6 +52,16 @@ pre {
    padding: 0px 0px 100px 30px;
 }
 
+#spinner {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  right: 50%;
+  height: 42px;
+  width: 42px;
+  background: url(/ajax-loader.gif)
+}
+
 dl {
    margin: 1em 0 0 1em;
    float: left;
