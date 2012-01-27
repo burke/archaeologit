@@ -1,8 +1,3 @@
-require File.expand_path('../config/boot',__FILE__)
-
-use Rack::Auth::Basic do |username, password|
-  [username, password] == ['play', 'nicely']
-end
-
+require File.expand_path('../config/boot', __FILE__)
 run JSGitHistory::Site.new
 

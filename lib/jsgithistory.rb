@@ -1,2 +1,2 @@
-require File.join(File.dirname(__FILE__), 'jsgithistory/repository')
-require File.join(File.dirname(__FILE__), 'jsgithistory/site')
+require_relative 'jsgithistory/repository'
+require_relative 'jsgithistory/site'

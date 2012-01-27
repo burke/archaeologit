@@ -1,57 +1,32 @@
+require 'open3'
 require 'yaml'
 require 'fileutils'
 
 module JSGitHistory
   class Repository
-    def self.histories
-      @histories
-    end
+    REPO_DIR = Pathname.new("/Users/burke/jsgh_repos")
 
-    REPO_DIR = "/Users/burke/jsgh_repos"
-    
-    def local_copy_exists?
-      File.directory?(local_path)
-    end 
-    
-    def clone
-      system("git", "clone", github_url, local_path)
-    end 
+    def initialize(repo)
+      @repo = repo
+    end
 
     def pull
-      FileUtils.cd(local_path) do
+      FileUtils.cd(path) do
         system("git", "pull")
-      end       
-    end 
-    
-    def initialize(user, repo)
-      @user = user
-      @repo = repo
-      local_copy_exists? ? pull : clone
-    end 
-
-    def local_path
-      "#{REPO_DIR}/#{@user}/#{@repo}"
-    end 
-    
-    def github_url
-      "http://github.com/#{@user}/#{@repo}.git"
-    end 
-
-    # attempt to prevent traversal
-    def no_traverse(path)
-      return '/' unless path and path.first
-   
-      path = path.first
-      safe_depth =      path.scan(/\/[\w_]/).length
-      attempted_depth = path.scan(/\.\.\//).length
-   
-      safe_depth >= attempted_depth ? path : '/'
+      end
     end
-    
+
+    def log_stuff(ref, file)
+      FileUtils.cd(path) do
+        p3 = Open3.popen3("git", "log", "--reverse", "-p", ref, file)
+        return p3[1].readlines.join("\n")
+      end
+    end
+
     def path
-      "#{REPO_DIR}/#{@user}/#{@repo}"
-    end 
-    
+      REPO_DIR + @repo
+    end
+
   end
-end 
+end
 
