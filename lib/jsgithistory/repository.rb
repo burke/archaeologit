@@ -1,5 +1,4 @@
 require 'open3'
-require 'yaml'
 require 'fileutils'
 
 module JSGitHistory
@@ -16,10 +15,13 @@ module JSGitHistory
       end
     end
 
-    def log_stuff(ref, file)
+    def reconstruction(ref, file)
       FileUtils.cd(path) do
-        p3 = Open3.popen3("git", "log", "--reverse", "-p", ref, file)
-        return p3[1].readlines.join("\n")
+        return Open3.
+          popen3("git", "log", "--reverse", "-p", ref, file).
+          slice(1).
+          readlines.
+          join("\n")
       end
     end
 
